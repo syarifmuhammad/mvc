@@ -39,37 +39,50 @@
 </head>
 <body class="container">
 	<h1 style="font-family:Pacifico" align="center" margin="20px;" padding="20px;">Sewa Baju Lestari</h1>
-	<!-- <form action="" method="GET">
-		<input type="search" name="clothes">
-	</form> -->
 	<div class="d-flex justify-content-between mb-3">
-		<a href="rent" class="btn btn-info">Manage Baju yang di sewa</a>
-		<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahBaju">Tambah Baju</button>
+		<a href="../mvc" class="btn btn-info">Manage Baju</a>
+		<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahRent">Tambah Sewa Baju</button>
 	</div>
 	<table class="table table-striped table-hover">
 		<thead>
 		  <tr style="color : black;">
 			<th scope="col">No</th>
-			<th scope="col">Nama Baju</th>
-			<th scope="col">Tipe Baju</th>
-			<th scope="col">Gender</th>
+			<th scope="col">Nama Penyewa</th>
+			<th scope="col">Baju</th>
+			<th scope="col">Tanggal Sewa</th>
+			<th scope="col">Tanggal Pengembalian</th>
+			<th scope="col">Jumlah Hari</th>
 			<th scope="col">Biaya Sewa</th>
 			<th scope="col">Aksi</th>
 		  </tr>
 		</thead>
 		<tbody>
 			<!-- mengambil data pada table model.php  -->
-			<?php foreach ($clothes as $key => $data){ ?>
+			<?php foreach ($rent as $key => $data){ ?>
 				<tr>
 					<th scope="row"><?=$key+1?></th>
-					<td><?=$data["name"]?></td>
-					<td><?=$data["type"]?></td>
-					<td><?=$data["gender"]?></td>
-					<td><?=$data["costPerDay"]?></td>
+					<td><?=$data["nama"]?></td>
 					<td>
-					<button class="btn btn-info" onclick="editBaju(<?=$data['id']?>, '<?=$data['name']?>', '<?=$data['type']?>', '<?=$data['gender']?>', '<?=$data['costPerDay']?>')">Ubah</button>
-					<form action="./baju/delete" method="post">
-						<input type="hidden" name="id" value="<?=$data['id']?>">
+						<table class="table">
+							<?php foreach($data["baju"] as $baju){ ?>
+								<tr>
+									<td><?=$baju["name"]?></td>
+									<td><?=$baju["costPerDay"]?>/hari</td>
+								</tr>
+							<?php } ?>
+							<tr>
+								<th>TOTAL</th>
+								<td><?=$data["harga"]?></td>
+							</tr>
+						</table>
+					</td>
+					<td><?=$data["start_date"]?></td>
+					<td><?=$data["end_date"]?></td>
+					<td><?=$data["hari"]?></td>
+					<td><?=$data["harga"]*$data["hari"]?></td>
+					<td>
+					<form action="./rent/delete" method="post">
+						<input type="hidden" name="id" value="<?=$data["id"]?>">
 						<button class="btn btn-danger" type="submit" name="submit">Hapus</button>
 					</form>
 					</td>
@@ -77,39 +90,32 @@
 			<?php } ?>
 		</tbody>
 	</table>
-	<div class="modal fade" id="modalTambahBaju" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<form action="./baju/insert" method="post" class="form modal-dialog modal-dialog-centered modal-dialog-scrollable">
+	<div class="modal fade" id="modalTambahRent" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<form action="./rent/insert" method="post" class="form modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalLabel">Tambah Baju</h5>
+				<h5 class="modal-title" id="exampleModalLabel">Tambah Sewa Baju</h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
 				<div class="mb-3">
-					<label class="form-label">Nama Baju</label>
-					<input type="text" placeholder="Nama Baju" name="name" class="form-control">
+					<label class="form-label">Nama Penyewa</label>
+					<input type="text" placeholder="Nama Penyewa" name="nama" class="form-control">
 				</div>
 				<div class="mb-3">
-					<label class="form-label">Tipe Baju</label>
-					<select name="type" class="form-control">
-						<option value="Baju Adat">Baju Adat</option>
-						<option value="Baju Cosplay">Baju Cosplay</option>
-						<option value="Baju Profesi">Baju Profesi</option>
-						<option value="Baju Pernikahan">Baju Pernikahan</option>
-					</select>
+					<label class="form-label">Baju yang di sewa</label>
+					<?php foreach($clothes as $data) { ?>
+					<div class="form-check">
+						<input class="form-check-input" type="checkbox" value="<?=$data['id']?>" name="clothes_id[]">
+						<label class="form-check-label">
+							<?=$data["name"]?>
+						</label>
+					</div>
+					<?php } ?>
 				</div>
 				<div class="mb-3">
-					<label class="form-label">Gender</label>
-					<select name="gender" class="form-control">
-						<option value="Wanita">Wanita</option>
-						<option value="Pria">Pria</option>
-						<option value="Anak Laki-laki">Anak Laki-laki</option>
-						<option value="Anak Perempuan">Anak Perempuan</option>
-					</select>
-				</div>
-				<div class="mb-3">
-					<label class="form-label">Biaya Per Hari</label>
-					<input type="number" name="costPerDay" class="form-control">
+					<label class="form-label">Jumlah hari di sewa</label>
+					<input type="number" name="hari" placeholder="Jumlah hari di sewa" class="form-control">
 				</div>
 			</div>
 			<div class="modal-footer">
@@ -130,7 +136,7 @@
 			<div class="modal-body">
 				<input type="hidden" name="id" id="editId">
 				<div class="mb-3">
-					<label class="form-label">Nama Baju</label>
+					<label class="form-label">Nama</label>
 					<input type="text" placeholder="Nama Baju" id="editName" name="name" class="form-control">
 				</div>
 				<div class="mb-3">

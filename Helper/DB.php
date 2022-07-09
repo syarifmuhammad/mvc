@@ -28,6 +28,12 @@
             return mysqli_query(self::$connection, $query);
         }
 
+        public static function getLastId(){
+            self::getConnection();
+            return mysqli_insert_id(self::$connection);
+        }
+
+
     }
 
 ?>
